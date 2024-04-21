@@ -1,0 +1,117 @@
+<!-- Subject Page Template: subject_page.html -->
+{% extends "base.html" %} {% block content %}
+<div class="container mt-5">
+  <h1>{{ subject_name }}</h1>
+  <div class="mb-3">
+    <h5><label for="goal" class="form-label">Current Goal:</label></h5>
+    <h3 id="goalText">{{ goal }}</h3>
+    <button type="button" class="btn btn-secondary" onclick="editGoal()">
+      Edit
+    </button>
+    <input
+      type="text"
+      class="form-control"
+      name="goal"
+      id="goalInput"
+      value="{{ goal }}"
+      style="display: none"
+    />
+    <button
+      type="button"
+      class="btn btn-primary"
+      id="updateButton"
+      onclick="confirmUpdateGoal()"
+      style="display: none"
+    >
+      Save Changes
+    </button>
+  </div>
+  <div class="container mt-5">
+    {% if first_visit %}
+    <h2>Welcome to the {{ subject_name }} page!</h2>
+    <p>
+      To better tailor our recommendation to your needs, please answer the
+      following questions:
+    </p>
+    <form id="questionsForm">
+      {% for question in questions %}
+      <div class="mb-3">
+        <input
+          type="hidden"
+          name="question{{ loop.index }}"
+          value="{{ question.question }}"
+        />
+        <label for="answer{{ loop.index }}" class="form-label"
+          >{{ question.question }}</label
+        >
+        <textarea
+          class="form-control"
+          id="answer{{ loop.index }}"
+          name="answer{{ loop.index }}"
+          rows="3"
+          required
+        ></textarea>
+      </div>
+      {% endfor %}
+      <button type="button" class="btn btn-primary" onclick="submitAnswers()">
+        Submit Answers
+      </button>
+    </form>
+
+    {% else %}
+    <!-- Display the recommendation -->
+    {{ recommendation|safe }} {% endif %}
+  </div>
+</div>
+
+<script>
+  function submitAnswers() {
+    const form = document.getElementById("questionsForm");
+    const formData = new FormData(form);
+
+    fetch(`/subject/{{ subject_name }}/process_answers`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Recommendation:", data.recommendation);
+        // Set if_first_visit to false and display the recommendation
+        window.location.href = `/subject/{{ subject_name }}?first_visit=false&recommendation=${data.recommendation}`;
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function editGoal() {
+    document.getElementById("goalText").style.display = "none";
+    document.getElementById("goalInput").style.display = "block";
+    document.getElementById("updateButton").style.display = "block";
+  }
+
+  function confirmUpdateGoal() {
+    const newGoal = document.getElementById("goalInput").value;
+    if (confirm(`Are you sure you want to update the goal to "${newGoal}"?`)) {
+      updateGoal(newGoal);
+    }
+  }
+
+  function updateGoal(newGoal) {
+    fetch(`/subject/{{ subject_name }}/update_goal`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ goal: newGoal }),
+    }).then((response) => {
+      if (response.ok) {
+        alert("Goal updated successfully!");
+        window.location.reload(); // Reload to update the page with new data
+      } else {
+        alert("Failed to update goal.");
+      }
+    });
+  }
+</script>
+{% endblock %}

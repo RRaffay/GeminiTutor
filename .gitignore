@@ -1,0 +1,32 @@
+misc/
+googleCreds.json
+
+# Python
+*.pyc
+__pycache__/
+env/
+venv/
+*.env
+
+# Mac
+.DS_Store
+
+# Flask
+instance/
+.webassets-cache
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache/
+nosetests.xml

@@ -1,0 +1,146 @@
+{% extends "base.html" %} {% block title %}Register Page{% endblock %} {% block
+content %}
+<style>
+  .form-control {
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+  }
+  .form-label {
+    font-weight: bold;
+  }
+  .form-step {
+    display: none;
+  }
+  .form-step-active {
+    display: block;
+  }
+</style>
+<div class="container mt-5">
+  <h1 class="mb-3">Register</h1>
+  <form method="post" class="w-50" id="registration-form">
+    <!-- User Information Step -->
+    <div id="step-1" class="form-step form-step-active">
+      <div class="mb-3">
+        <label for="first_name" class="form-label">First Name:</label>
+        <input
+          type="text"
+          class="form-control"
+          name="first_name"
+          id="first_name"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="last_name" class="form-label">Last Name:</label>
+        <input
+          type="text"
+          class="form-control"
+          name="last_name"
+          id="last_name"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email:</label>
+        <input
+          type="email"
+          class="form-control"
+          name="email"
+          id="email"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input
+          type="password"
+          class="form-control"
+          name="password"
+          id="password"
+          required
+        />
+      </div>
+      <button type="button" class="btn btn-primary" onclick="showStep(2)">
+        Next
+      </button>
+    </div>
+
+    <!-- Subject Selection Step -->
+    <div id="step-2" class="form-step">
+      <div class="mb-3">
+        <label class="form-label">Subject Preferences:</label>
+        {% for subject in ['Science', 'Mathematics', 'Arts', 'Languages'] %}
+        <div class="form-check">
+          <input
+            class="form-check-input subject-checkbox"
+            type="checkbox"
+            value="{{ subject }}"
+            id="{{ subject }}"
+            name="study_preference"
+          />
+          <label class="form-check-label" for="{{ subject }}">
+            {{ subject }}
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+      <button type="button" class="btn btn-secondary" onclick="showStep(1)">
+        Previous
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        onclick="updateGoalsVisibility(); showStep(3)"
+      >
+        Next
+      </button>
+    </div>
+
+    <!-- Goals Input Step -->
+    <div id="step-3" class="form-step">
+      {% for subject in ['Science', 'Mathematics', 'Arts', 'Languages'] %}
+      <div
+        class="mb-3 goal-input"
+        id="goal-{{ subject }}"
+        style="display: none"
+      >
+        <label for="goal_{{ subject }}" class="form-label"
+          >{{ subject }} Goal:</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          name="goal_{{ subject }}"
+          id="goal_{{ subject }}"
+        />
+      </div>
+      {% endfor %}
+      <button type="button" class="btn btn-secondary" onclick="showStep(2)">
+        Previous
+      </button>
+      <button type="submit" class="btn btn-success">Register</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function showStep(step) {
+    document.querySelectorAll(".form-step").forEach((div) => {
+      div.style.display = "none";
+    });
+    document.getElementById(`step-${step}`).style.display = "block";
+  }
+
+  function updateGoalsVisibility() {
+    const checkboxes = document.querySelectorAll(".subject-checkbox");
+    checkboxes.forEach((checkbox) => {
+      const goalDiv = document.getElementById(`goal-${checkbox.value}`);
+      if (checkbox.checked) {
+        goalDiv.style.display = "block";
+      } else {
+        goalDiv.style.display = "none";
+      }
+    });
+  }
+</script>
+{% endblock %}
