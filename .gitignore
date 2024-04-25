@@ -1,5 +1,6 @@
 misc/
 googleCreds.json
+.venv/
 
 # Python
 *.pyc
