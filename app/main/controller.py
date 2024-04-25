@@ -78,3 +78,24 @@ def process_answers_controller(user_id, subject_name, questions, answers):
 
     update_recommendation(user_id, subject_name, recommendation)
     return recommendation
+
+
+def get_current_questions(subject_name, user_id):
+    """
+    Get the current questions for a specific subject.
+    Args:
+        subject_name (str): The name of the subject.
+        user_id (str): The user ID.
+    Returns:
+        list: The current questions for the subject.
+    Raises:
+        Exception: If an error occurs while retrieving the questions.
+    """
+    user_data = get_user_data(user_id)
+    current_questions = user_data['current_questions'].get(subject_name, None)
+
+    if current_questions is None:
+        return None
+
+    print(current_questions)
+    return current_questions

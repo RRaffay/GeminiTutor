@@ -3,6 +3,7 @@ from app.firebase_funcs.database import get_user_data, update_goal_and_recommend
 from app.utils.markdown_conversion import convert_markdown_to_html
 from flask import jsonify
 from app.main.controller import handle_initial_questions, process_answers_controller
+from app.main.controller import handle_initial_questions, process_answers_controller, get_current_questions
 
 main = Blueprint('main', __name__)
 
@@ -111,3 +112,12 @@ def process_answers(subject_name):
 
         return jsonify({'recommendation': recommendation})
     return redirect(url_for('auth.login'))
+
+
+@main.route("/subject/<subject_name>/fetch_questions", methods=['POST'])
+def fetch_questions(subject_name):
+    if 'user_id' in session:
+        user_id = session['user_id']
+        current_questions = get_current_questions(
+            subject_name=subject_name, user_id=user_id)
+        return jsonify({'questions': current_questions})

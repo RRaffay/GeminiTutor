@@ -60,11 +60,27 @@
 
     {% else %}
     <!-- Display the recommendation -->
-    {{ recommendation|safe }} {% endif %}
+    {{ recommendation|safe }}
+    <button type="button" class="btn btn-primary" onclick="fetchQuestions()">
+      Fetch Questions</button
+    >{% endif %}
   </div>
 </div>
 
 <script>
+  function fetchQuestions() {
+    fetch(`/subject/{{ subject_name }}/fetch_questions`, {
+      method: "POST",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Questions:", data.questions);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   function submitAnswers() {
     const form = document.getElementById("questionsForm");
     const formData = new FormData(form);
