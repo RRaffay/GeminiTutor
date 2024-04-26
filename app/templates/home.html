@@ -1,17 +1,18 @@
 {% extends "base.html" %} {% block title %} Home Page {% endblock %} {% block
 content %}
 <div class="container mt-5">
-  <h1>Hello, {{ user.first_name }}!</h1>
+  <h1 class="text-center">Hello, {{ user.first_name }}!</h1>
   <div class="row">
     {% for subject in user.study_preference %}
-    <div class="col-md-4 mb-3">
-      <div class="card">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm hover-transform card-custom">
         <div class="card-body">
           <a
             href="{{ url_for('main.subject_page', subject_name=subject) }}"
-            class="btn btn-primary w-100"
-            >{{ subject }}</a
+            class="btn w-100 stretched-link btn-match-card"
           >
+            {{ subject }}
+          </a>
         </div>
       </div>
     </div>

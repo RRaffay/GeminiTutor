@@ -3,11 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Gemini tutor{% endblock %}</title>
+    <title>{% block title %}Gemini Tutor{% endblock %}</title>
     <style>
       body {
         font-family: "Roboto", sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
       }
+
       h1,
       h2,
       h3,
@@ -16,31 +19,97 @@
       h6 {
         font-family: "Montserrat", sans-serif;
       }
+
       .navbar-custom {
-        background-color: #123456; /* A dark blue shade */
-        color: #ffffff;
+        background-color: #1a76d2;
+        color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
+
       .btn-primary {
-        background-color: #0066cc; /* A vibrant blue */
-        border-color: #005cbf;
+        background-color: #007bff;
+        border-color: #007bff;
+        transition: background-color 0.3s ease-in-out,
+          box-shadow 0.3s ease-in-out;
       }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004080;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
       .btn-secondary {
-        background-color: #666666; /* A neutral grey */
-        border-color: #4d4d4d;
+        background-color: #6c757d;
+        border-color: #6c757d;
+      }
+
+      .btn-secondary:hover {
+        background-color: #545b62;
+        border-color: #4e555b;
+      }
+
+      .form-control {
+        border-radius: 0.25rem;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+
+      .form-label {
+        font-weight: bold;
+      }
+
+      .hover-transform {
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .hover-transform:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .card {
+        transition: all 0.3s ease-in-out;
+        border-radius: 10px;
+      }
+
+      .card-img-top {
+        height: 150px;
+        object-fit: cover;
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
+
+      .card-custom {
+        background-color: #4a69bd;
+        border: none;
+      }
+
+      .btn-match-card {
+        background-color: transparent;
+        color: #fff;
+        border: none;
+      }
+
+      .btn-match-card:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
       }
     </style>
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
-
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
       <div class="container">
         <a class="navbar-brand" href="{{ url_for('main.home') }}"
           >Gemini Tutor</a
@@ -76,9 +145,7 @@
         </div>
       </div>
     </nav>
-
-    <div class="container mt-4">{% block content %}{% endblock %}</div>
-
+    <div class="container my-5">{% block content %}{% endblock %}</div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
