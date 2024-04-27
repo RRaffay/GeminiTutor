@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
-from app.firebase_funcs.database import get_user_data, update_goal_and_recommendations, update_user_data, add_answers_to_user_data, get_recommendation_string, update_recommendation
+from app.firebase_funcs.database import get_user_data, update_goal_and_recommendations
 from app.utils.markdown_conversion import convert_markdown_to_html
 from flask import jsonify
 from app.main.controller import handle_initial_questions, process_answers_controller, get_current_questions, get_home_page
@@ -56,6 +56,8 @@ def class_page(class_name):
                     session['user_id'], class_name, goal)
                 return render_template('subject_page.html', class_name=class_name, goal=goal, first_visit=first_visit, questions=parsed_questions['questions'])
             else:
+                if 'recommendations' not in user_data:
+                    user_data['recommendations'] = {}
                 recommendation = user_data['recommendations'].get(
                     class_name, '')
                 html_recommendation = convert_markdown_to_html(recommendation)

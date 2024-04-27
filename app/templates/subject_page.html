@@ -84,7 +84,6 @@
       .then((data) => {
         console.log("Recommendation:", data.recommendation);
         // Set if_first_visit to false and display the recommendation
-        window.location.href = `/class/{{ class_name }}?first_visit=false&recommendation=${data.recommendation}`;
       })
       .catch((error) => {
         console.error("Error:", error);

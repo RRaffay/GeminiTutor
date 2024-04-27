@@ -1,16 +1,18 @@
-from app.gemini_funcs.initial_rec import generate_initial_questions, perform_analysis, generate_new_questions
-from app.firebase_funcs.database import get_user_data, update_goal_and_recommendations, update_user_data, add_answers_to_user_data, get_recommendation_string, update_recommendation, move_questions_to_old_questions, get_input_string_new_questions
+from app.gemini_funcs.initial_rec import generate_initial_questions
+from app.gemini_funcs.drivers import class_details
+from app.firebase_funcs.database import get_user_data, update_goal_and_recommendations, update_user_data, add_answers_to_user_data, update_recommendation, move_questions_to_old_questions
 from app.utils.data_parsing import parse_questions
 from flask import session
+from app.gemini_funcs.rec_logic import get_recommendation_string, perform_analysis, get_input_string_new_questions, generate_new_questions
 
 
-def handle_initial_questions(uid, subject_name, goal):
+def handle_initial_questions(uid, course_name, goal):
     """
     Handles the initial questions for a user.
 
     Args:
         uid (str): The user ID.
-        subject_name (str): The name of the subject.
+        course_name (str): The name of the subject.
         goal (str): The user's goal.
 
     Returns:
@@ -19,7 +21,17 @@ def handle_initial_questions(uid, subject_name, goal):
     Raises:
         Exception: If an error occurs while parsing the questions.
     """
-    initial_questions = generate_initial_questions(subject_name, goal)
+    user_data = get_user_data(uid)
+    university_name = user_data['university']
+
+    course_description = class_details(course_name, university_name)
+
+    if 'course_descriptions' not in user_data:
+        user_data['course_descriptions'] = {}
+    user_data['course_descriptions'][course_name] = course_description
+    update_user_data(uid, user_data)
+
+    initial_questions = generate_initial_questions(course_description, goal)
 
     try:
         parsed_questions = parse_questions(initial_questions)
@@ -30,8 +42,8 @@ def handle_initial_questions(uid, subject_name, goal):
     firebase_questions = parsed_questions
 
     update_user_data(uid, {
-        f'first_visit.{subject_name}': False,
-        f'current_questions.{subject_name}': firebase_questions
+        f'first_visit.{course_name}': False,
+        f'current_questions.{course_name}': firebase_questions
     })
 
     return parsed_questions

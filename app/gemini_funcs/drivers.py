@@ -136,6 +136,17 @@ def handle_response(response, chat):
 
 
 def class_details(class_name, school_name):
+    """
+    Retrieves class details for a given class and school.
+
+    Args:
+        class_name (str): The name of the class.
+        school_name (str): The name of the school.
+
+    Returns:
+        str: The class details.
+
+    """
     model = genai.GenerativeModel(
         'gemini-pro', tools=[article_summarizer, google_search])
     chat = model.start_chat()
