@@ -112,6 +112,15 @@ content %}
 
 <script>
   function showStep(step) {
+    const currentStep = document.querySelector(".form-step-active");
+    const inputs = currentStep.querySelectorAll("input");
+    for (let input of inputs) {
+      if (input.value.trim() === "") {
+        alert("Please fill all the fields before proceeding.");
+        return;
+      }
+    }
+
     document.querySelectorAll(".form-step").forEach((div) => {
       div.style.display = "none";
     });
@@ -119,6 +128,14 @@ content %}
   }
 
   function parseClassesAndShowGoals() {
+    const classes = document.getElementById("class_names").value.split(",");
+
+    // Check if the classes field is not empty
+    if (classes[0].trim() === "") {
+      alert("Please enter at least one class before proceeding.");
+      return;
+    }
+
     const container = document.getElementById("goals-container");
     container.innerHTML = ""; // Clear previous inputs
     const classes = document.getElementById("class_names").value.split(",");

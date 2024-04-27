@@ -27,7 +27,7 @@ def create_user_document(uid, first_name, last_name, email, university, classes,
         'email': email,
         'university': university,
         'classes': classes,
-        'first_visit': {course: False for course in classes},
+        'first_visit': {course: True for course in classes},
         'goals': goals
     }
     doc_ref.set(doc_info)
