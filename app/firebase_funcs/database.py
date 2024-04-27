@@ -171,6 +171,8 @@ def update_recommendation(uid, subject_name, recommendation):
         recommendation (str): New recommendation.
     """
     user_data = get_user_data(uid)
+    if not user_data.get('recommendations'):
+        user_data['recommendations'] = {}
     user_data['recommendations'][subject_name] = recommendation
     update_user_data(uid, user_data)
 
