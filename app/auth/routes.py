@@ -18,20 +18,20 @@ def register():
         If the request method is GET, it renders the registration form.
     """
     if request.method == 'POST':
+        # Retrieving all form fields
         first_name = request.form['first_name']
         last_name = request.form['last_name']
         email = request.form['email']
         password = request.form['password']
-        study_preferences = request.form.getlist('study_preference')
+        university = request.form['university']
+        classes = [cls.strip()
+                   for cls in request.form['class_names'].split(',')]
 
-        goals = {}
-        for subject in ['Science', 'Mathematics', 'Arts', 'Languages']:
-            goal = request.form.get(f'goal_{subject}', '')
-            if goal:
-                goals[subject] = goal
+        goals = {cls.strip(): request.form.get(f'goal_{cls.strip()}', '')
+                 for cls in classes}
 
         user = create_user(email, password, first_name,
-                           last_name, study_preferences, goals)
+                           last_name, university, classes, goals)
         session['user_id'] = user.uid
         return redirect(url_for('main.home'))
 

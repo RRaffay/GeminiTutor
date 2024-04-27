@@ -2,8 +2,7 @@ from flask import Blueprint, render_template, session, redirect, url_for, reques
 from app.firebase_funcs.database import get_user_data, update_goal_and_recommendations, update_user_data, add_answers_to_user_data, get_recommendation_string, update_recommendation
 from app.utils.markdown_conversion import convert_markdown_to_html
 from flask import jsonify
-from app.main.controller import handle_initial_questions, process_answers_controller
-from app.main.controller import handle_initial_questions, process_answers_controller, get_current_questions
+from app.main.controller import handle_initial_questions, process_answers_controller, get_current_questions, get_home_page
 
 main = Blueprint('main', __name__)
 
@@ -23,22 +22,22 @@ def home():
         If the 'user_id' is not present in the session, it redirects to the login page.
     """
     if 'user_id' in session:
-        user_data = get_user_data(session['user_id'])
-        if user_data:
-            return render_template('home.html', user=user_data)
+        home_page_data = get_home_page(session['user_id'])
+        if home_page_data:
+            return render_template('home.html', data=home_page_data)
         else:
             print("User data not found.")
             return "<p>User data not found.</p>", 404
     return redirect(url_for('auth.login'))
 
 
-@main.route("/subject/<subject_name>")
-def subject_page(subject_name):
+@main.route("/class/<class_name>")
+def class_page(class_name):
     """
-    Render the subject page for a given subject name.
+    Render the class page for a given class name.
 
     Args:
-        subject_name (str): The name of the subject.
+        subject_name (str): The name of the class.
 
     Returns:
         flask.Response: The rendered HTML template for the subject page.
@@ -50,17 +49,17 @@ def subject_page(subject_name):
     if 'user_id' in session:
         user_data = get_user_data(session['user_id'])
         if user_data:
-            goal = user_data['goals'].get(subject_name, '')
-            first_visit = user_data['first_visit'].get(subject_name, False)
+            goal = user_data['goals'].get(class_name, '')
+            first_visit = user_data['first_visit'].get(class_name, False)
             if first_visit:
                 parsed_questions = handle_initial_questions(
-                    session['user_id'], subject_name, goal)
-                return render_template('subject_page.html', subject_name=subject_name, goal=goal, first_visit=first_visit, questions=parsed_questions['questions'])
+                    session['user_id'], class_name, goal)
+                return render_template('subject_page.html', subject_name=class_name, goal=goal, first_visit=first_visit, questions=parsed_questions['questions'])
             else:
                 recommendation = user_data['recommendations'].get(
-                    subject_name, '')
+                    class_name, '')
                 html_recommendation = convert_markdown_to_html(recommendation)
-                return render_template('subject_page.html', subject_name=subject_name, goal=goal, first_visit=first_visit, recommendation=html_recommendation)
+                return render_template('subject_page.html', subject_name=class_name, goal=goal, first_visit=first_visit, recommendation=html_recommendation)
     return redirect(url_for('auth.login'))
 
 

@@ -2,28 +2,35 @@ from .init import db
 from app.gemini_funcs.initial_rec import create_recommendations
 
 
-def create_user_document(uid, first_name, last_name, email, study_preferences, goals):
+def create_user_document(uid, first_name, last_name, email, university, classes, goals):
     """
-    Create a new user document in the Firestore database.
+    Creates a new user document in the 'users' collection of the Firestore database.
 
     Args:
-        uid (str): Unique identifier for the user.
-        first_name (str): User's first name.
-        last_name (str): User's last name.
-        email (str): User's email.
-        study_preferences (list): List of subjects the user is interested in.
-        goals (dict): Dictionary of user's goals for each subject.
+        uid (str): The unique identifier for the user.
+        first_name (str): The first name of the user.
+        last_name (str): The last name of the user.
+        email (str): The email address of the user.
+        university (str): The university the user is associated with.
+        classes (list): A list of classes the user is enrolled in.
+        goals (list): A list of goals the user has set.
+
+    Returns:
+        None
     """
+    # Get a reference to the document
     doc_ref = db.collection('users').document(uid)
-    doc_ref.set({
+
+    doc_info = {
         'first_name': first_name,
         'last_name': last_name,
         'email': email,
-        'study_preference': study_preferences,
-        'goals': goals,
-        'first_visit': {subject: True for subject in study_preferences},
-        'recommendations': {}
-    })
+        'university': university,
+        'classes': classes,
+        'first_visit': {course: False for course in classes},
+        'goals': goals
+    }
+    doc_ref.set(doc_info)
 
 
 def get_user_data(uid):
