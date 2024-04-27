@@ -27,7 +27,7 @@ def create_user_document(uid, first_name, last_name, email, university, classes,
         'email': email,
         'university': university,
         'classes': classes,
-        'first_visit': {course: False for course in classes},
+        'first_visit': {course: True for course in classes},
         'goals': goals
     }
     doc_ref.set(doc_info)
@@ -171,6 +171,8 @@ def update_recommendation(uid, subject_name, recommendation):
         recommendation (str): New recommendation.
     """
     user_data = get_user_data(uid)
+    if not user_data.get('recommendations'):
+        user_data['recommendations'] = {}
     user_data['recommendations'][subject_name] = recommendation
     update_user_data(uid, user_data)
 

@@ -43,7 +43,7 @@ def generate_new_questions(subject_name, goal, old_questions, recommendation):
 
     response = model.generate_content(input_string)
 
-    return response
+    return response.text
 
 
 def main():

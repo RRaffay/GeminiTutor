@@ -54,22 +54,22 @@ def class_page(class_name):
             if first_visit:
                 parsed_questions = handle_initial_questions(
                     session['user_id'], class_name, goal)
-                return render_template('subject_page.html', subject_name=class_name, goal=goal, first_visit=first_visit, questions=parsed_questions['questions'])
+                return render_template('subject_page.html', class_name=class_name, goal=goal, first_visit=first_visit, questions=parsed_questions['questions'])
             else:
                 recommendation = user_data['recommendations'].get(
                     class_name, '')
                 html_recommendation = convert_markdown_to_html(recommendation)
-                return render_template('subject_page.html', subject_name=class_name, goal=goal, first_visit=first_visit, recommendation=html_recommendation)
+                return render_template('subject_page.html', class_name=class_name, goal=goal, first_visit=first_visit, recommendation=html_recommendation)
     return redirect(url_for('auth.login'))
 
 
-@main.route("/subject/<subject_name>/update_goal", methods=['POST'])
-def update_goal(subject_name):
+@main.route("/class/<class_name>/update_goal", methods=['POST'])
+def update_goal(class_name):
     """
-    Update the goal for a specific subject.
+    Update the goal for a specific class.
 
     Args:
-        subject_name (str): The name of the subject for which the goal is being updated.
+        class_name (str): The name of the subject for which the goal is being updated.
 
     Returns:
         tuple: A tuple containing an empty string and the HTTP status code 200.
@@ -81,18 +81,18 @@ def update_goal(subject_name):
     if 'user_id' in session:
         uid = session['user_id']
         new_goal = request.json['goal']
-        update_goal_and_recommendations(uid, subject_name, new_goal)
+        update_goal_and_recommendations(uid, class_name, new_goal)
         return "", 200
     return redirect(url_for('auth.login'))
 
 
-@main.route("/subject/<subject_name>/process_answers", methods=['POST'])
-def process_answers(subject_name):
+@main.route("/class/<class_name>/process_answers", methods=['POST'])
+def process_answers(class_name):
     """
     Process the answers submitted by the user for a specific subject.
 
     Args:
-        subject_name (str): The name of the subject for which the answers are being processed.
+        class_name (str): The name of the subject for which the answers are being processed.
 
     Returns:
         If the user is logged in, it returns a JSON response containing the recommendation for the user.
@@ -107,16 +107,16 @@ def process_answers(subject_name):
                    for k in form_data if k.startswith('answer')}
 
         recommendation = process_answers_controller(
-            user_id, subject_name, questions, answers)
+            user_id, class_name, questions, answers)
 
         return jsonify({'recommendation': recommendation})
     return redirect(url_for('auth.login'))
 
 
-@main.route("/subject/<subject_name>/fetch_questions", methods=['POST'])
-def fetch_questions(subject_name):
+@main.route("/class/<class_name>/fetch_questions", methods=['POST'])
+def fetch_questions(class_name):
     if 'user_id' in session:
         user_id = session['user_id']
         current_questions = get_current_questions(
-            subject_name=subject_name, user_id=user_id)
+            subject_name=class_name, user_id=user_id)
         return jsonify({'questions': current_questions})

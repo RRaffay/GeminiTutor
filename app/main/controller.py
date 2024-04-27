@@ -30,7 +30,7 @@ def handle_initial_questions(uid, subject_name, goal):
     firebase_questions = parsed_questions
 
     update_user_data(uid, {
-        f'first_visit.{subject_name}': True,
+        f'first_visit.{subject_name}': False,
         f'current_questions.{subject_name}': firebase_questions
     })
 
