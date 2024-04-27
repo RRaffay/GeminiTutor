@@ -74,6 +74,11 @@ def generate_new_questions(subject_name, goal, old_questions, recommendation):
 
     input_string = input_string_first + input_string_last
 
-    response = model.generate_content(input_string)
+    try:
+        response = model_pro.generate_content(input_string)
+    except Exception as e:
+        print(e)
+        print("Using the base model")
+        response = model.generate_content(input_string)
 
     return response.text

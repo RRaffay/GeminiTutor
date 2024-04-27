@@ -1,4 +1,4 @@
-from app.gemini_funcs.init import model
+from app.gemini_funcs.init import model, model_pro
 
 
 def generate_recommendation(subject: str, goal: str) -> str:
@@ -20,7 +20,12 @@ def generate_initial_questions(course_description, goal):
 
     question_combined = question_intial + question_last
 
-    response = model.generate_content(question_combined)
+    try:
+        response = model_pro.generate_content(question_combined)
+    except Exception as e:
+        print(e)
+        print("Using the base model")
+        response = model.generate_content(question_combined)
     return response.text
 
 
