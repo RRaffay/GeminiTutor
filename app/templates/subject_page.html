@@ -76,6 +76,15 @@
     const form = document.getElementById("questionsForm");
     const formData = new FormData(form);
 
+    // Get all the textareas in the form
+    const textareas = form.querySelectorAll("textarea");
+    textareas.forEach((textarea, index) => {
+      // Get the associated label text
+      const label = form.querySelector(`label[for="${textarea.id}"]`);
+      // Add the question to the FormData object
+      formData.append(`question${index + 1}`, label.textContent.trim());
+    });
+
     fetch(`/class/{{ class_name }}/process_answers`, {
       method: "POST",
       body: formData,
@@ -84,6 +93,7 @@
       .then((data) => {
         console.log("Recommendation:", data.recommendation);
         // Set if_first_visit to false and display the recommendation
+        window.location.href = `/class/{{ class_name }}?first_visit=false&recommendation=${data.recommendation}`;
       })
       .catch((error) => {
         console.error("Error:", error);
