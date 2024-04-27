@@ -1,8 +1,8 @@
 from app.firebase_funcs.init import db
-from app.gemini_funcs.init import model
+from app.gemini_funcs.init import model, model_pro
 
 
-def get_recommendation_string(uid, subject_name):
+def get_recommendation(uid, subject_name):
     """
     Generate a string of recommendations for a user.
 
@@ -11,7 +11,7 @@ def get_recommendation_string(uid, subject_name):
         subject_name (str): Name of the subject.
 
     Returns:
-        str: String of recommendations.
+        str: String of recommendation.
     """
     doc_ref = db.collection('users').document(uid)
     user_data = doc_ref.get().to_dict()
@@ -27,15 +27,19 @@ def get_recommendation_string(uid, subject_name):
         for q in user_data['current_questions'][subject_name]['questions']
     )
 
-    return f"""Generate recommendations for a user taking {subject_name}. 
+    input_string = f"""Generate recommendations for a user taking {subject_name}. 
 
     The course description: {course_description}.
 
     More specifically, the user's goal is: {goal}. Below is a set of questions asked to the user to gauge their understanding about the topic of interest. They are in the format questions, rationale for asking question, answer by users.\n\n{qa_string}"""
 
+    try:
+        response = model_pro.generate_content(input_string)
+    except Exception as e:
+        print(e)
+        print("Using the base model")
+        response = model.generate_content(input_string)
 
-def perform_analysis(input_string):
-    response = model.generate_content(input_string)
     return response.text
 
 

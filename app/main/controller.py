@@ -3,7 +3,7 @@ from app.gemini_funcs.drivers import class_details
 from app.firebase_funcs.database import get_user_data, update_goal_and_recommendations, update_user_data, add_answers_to_user_data, update_recommendation, move_questions_to_old_questions
 from app.utils.data_parsing import parse_questions
 from flask import session
-from app.gemini_funcs.rec_logic import get_recommendation_string, perform_analysis, get_input_string_new_questions, generate_new_questions
+from app.gemini_funcs.rec_logic import get_recommendation, get_input_string_new_questions, generate_new_questions
 
 
 def handle_initial_questions(uid, course_name, goal):
@@ -64,9 +64,7 @@ def process_answers_controller(user_id, subject_name, questions, answers):
     """
     add_answers_to_user_data(user_id, subject_name, questions, answers)
 
-    rec_input_string = get_recommendation_string(user_id, subject_name)
-
-    recommendation = perform_analysis(rec_input_string)
+    recommendation = get_recommendation(user_id, subject_name)
 
     move_questions_to_old_questions(user_id, subject_name)
 
