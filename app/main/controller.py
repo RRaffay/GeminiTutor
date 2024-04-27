@@ -99,3 +99,30 @@ def get_current_questions(subject_name, user_id):
 
     print(current_questions)
     return current_questions
+
+
+def get_home_page(user_id):
+    """
+    Get the home page for a user.
+
+    Args:
+        user_id (str): The user ID.
+
+    Returns:
+        dict: The user data.
+
+    Raises:
+        Exception: If an error occurs while retrieving the user data.
+    """
+    user_data = get_user_data(user_id)
+
+    if user_data is None:
+        return None
+
+    home_page = {
+        'first_name': user_data['first_name'],
+        'last_name': user_data['last_name'],
+        'classes': user_data['classes'],
+    }
+
+    return home_page

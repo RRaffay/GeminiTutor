@@ -60,29 +60,32 @@ content %}
           required
         />
       </div>
+      <div class="mb-3">
+        <label for="university" class="form-label">University:</label>
+        <input
+          type="text"
+          class="form-control"
+          name="university"
+          id="university"
+          required
+        />
+      </div>
       <button type="button" class="btn btn-primary" onclick="showStep(2)">
         Next
       </button>
     </div>
 
-    <!-- Subject Selection Step -->
+    <!-- Class Selection Step -->
     <div id="step-2" class="form-step">
       <div class="mb-3">
-        <label class="form-label">Subject Preferences:</label>
-        {% for subject in ['Science', 'Mathematics', 'Arts', 'Languages'] %}
-        <div class="form-check">
-          <input
-            class="form-check-input subject-checkbox"
-            type="checkbox"
-            value="{{ subject }}"
-            id="{{ subject }}"
-            name="study_preference"
-          />
-          <label class="form-check-label" for="{{ subject }}">
-            {{ subject }}
-          </label>
-        </div>
-        {% endfor %}
+        <label class="form-label">Classes you are interested in:</label>
+        <input
+          type="text"
+          class="form-control"
+          name="class_names"
+          id="class_names"
+          placeholder="Enter classes separated by commas"
+        />
       </div>
       <button type="button" class="btn btn-secondary" onclick="showStep(1)">
         Previous
@@ -90,7 +93,7 @@ content %}
       <button
         type="button"
         class="btn btn-primary"
-        onclick="updateGoalsVisibility(); showStep(3)"
+        onclick="parseClassesAndShowGoals();"
       >
         Next
       </button>
@@ -98,23 +101,7 @@ content %}
 
     <!-- Goals Input Step -->
     <div id="step-3" class="form-step">
-      {% for subject in ['Science', 'Mathematics', 'Arts', 'Languages'] %}
-      <div
-        class="mb-3 goal-input"
-        id="goal-{{ subject }}"
-        style="display: none"
-      >
-        <label for="goal_{{ subject }}" class="form-label"
-          >{{ subject }} Goal:</label
-        >
-        <input
-          type="text"
-          class="form-control"
-          name="goal_{{ subject }}"
-          id="goal_{{ subject }}"
-        />
-      </div>
-      {% endfor %}
+      <div id="goals-container"></div>
       <button type="button" class="btn btn-secondary" onclick="showStep(2)">
         Previous
       </button>
@@ -131,16 +118,20 @@ content %}
     document.getElementById(`step-${step}`).style.display = "block";
   }
 
-  function updateGoalsVisibility() {
-    const checkboxes = document.querySelectorAll(".subject-checkbox");
-    checkboxes.forEach((checkbox) => {
-      const goalDiv = document.getElementById(`goal-${checkbox.value}`);
-      if (checkbox.checked) {
-        goalDiv.style.display = "block";
-      } else {
-        goalDiv.style.display = "none";
-      }
+  function parseClassesAndShowGoals() {
+    const container = document.getElementById("goals-container");
+    container.innerHTML = ""; // Clear previous inputs
+    const classes = document.getElementById("class_names").value.split(",");
+    classes.forEach((cls) => {
+      const div = document.createElement("div");
+      div.className = "mb-3";
+      div.innerHTML = `
+        <label class="form-label">${cls.trim()} Goal:</label>
+        <input type="text" class="form-control" name="goal_${cls.trim()}" />
+      `;
+      container.appendChild(div);
     });
+    showStep(3);
   }
 </script>
 {% endblock %}
