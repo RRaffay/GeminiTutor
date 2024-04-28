@@ -26,7 +26,7 @@ def register():
         university = request.form['university']
         classes = [cls.strip()
                    for cls in request.form['class_names'].split(',')]
-
+        classes = [''.join(e for e in cls if e.isalnum()) for cls in classes]
         goals = {cls.strip(): request.form.get(f'goal_{cls.strip()}', '')
                  for cls in classes}
 
