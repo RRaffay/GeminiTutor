@@ -140,6 +140,7 @@ def add_class():
     if 'user_id' in session:
         uid = session['user_id']
         class_name = request.json['class_name']
+        class_name = ''.join(e for e in class_name if e.isalnum())
         goal = request.json['goal']
         success = add_class_to_user(uid, class_name=class_name, goal=goal)
 
