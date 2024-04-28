@@ -164,3 +164,46 @@ def update_goal_and_recommendations(uid, subject_name, new_goal):
     new_recommendations = create_recommendations({subject_name: new_goal})
     doc_ref.update(
         {f'recommendations.{subject_name}': new_recommendations[subject_name]})
+
+
+def add_class_to_user(uid, class_name, goal):
+    """
+    Add a class to a user's data in the Firestore database.
+
+    Args:
+        uid (str): Unique identifier for the user.
+        class_name (str): Name of the class.
+        goal (str): The user's goal for the class.
+    """
+    try:
+        doc_ref = db.collection('users').document(uid)
+        user_data = doc_ref.get().to_dict()
+
+        if class_name not in user_data['classes']:
+            user_data['classes'].append(class_name)
+            user_data['first_visit'][class_name] = True
+            user_data['goals'][class_name] = goal
+
+            doc_ref.update(user_data)
+
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
+def delete_class_from_user(uid, class_name):
+    """
+    Remove a class from the Firestore database for a given user.
+    """
+    doc_ref = db.collection('users').document(uid)
+    user_data = doc_ref.get().to_dict()
+    if class_name in user_data['classes']:
+        user_data['classes'].remove(class_name)
+        user_data['first_visit'].pop(class_name, None)
+        user_data['goals'].pop(class_name, None)
+        user_data['course_descriptions'].pop(class_name, None)
+        user_data['current_questions'].pop(class_name, None)
+        user_data['old_questions'].pop(class_name, None)
+        user_data['recommendations'].pop(class_name, None)
+        doc_ref.update(user_data)
