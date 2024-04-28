@@ -74,7 +74,7 @@ def process_answers_controller(user_id, subject_name, questions, answers):
     old_question_string = get_input_string_new_questions(user_id, subject_name)
 
     new_questions = generate_new_questions(
-        subject_name, user_goal, old_question_string, recommendation)
+        subject_name, user_goal, old_question_string, recommendation, user_id=user_id)
 
     try:
         parsed_questions = parse_questions(new_questions)

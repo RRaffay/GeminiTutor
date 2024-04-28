@@ -66,8 +66,25 @@ def get_input_string_new_questions(uid, subject_name):
     return qa_string
 
 
-def generate_new_questions(subject_name, goal, old_questions, recommendation):
-    input_string_first = f"""You are talking to someone interested in learning about {subject_name}. More specifically, their goal is {goal}. Your job is to help them get to their goal. They were previously asked the following questions: {old_questions}. Based on their answers, you gave them the following recommendation: {recommendation}. Now, come up with a set of 5 new questions that help you understand how much the person has learned from the previous questions and the recommendation you gave them."""
+def generate_new_questions(subject_name, goal, old_questions, recommendation, user_id):
+
+    doc_ref = db.collection('users').document(user_id)
+    user_data = doc_ref.get().to_dict()
+    university = user_data['university']
+    course_description = user_data['course_descriptions'].get(
+        subject_name, f'Course by {university}')
+
+    input_string_first = f"""You are talking to someone for a user taking {subject_name}. 
+
+    The course description: {course_description}. 
+    
+    More specifically, their goal is {goal}. Your job is to help them get to their goal. They were previously asked the following questions: {old_questions}. 
+    
+    
+    Based on their answers, you gave them the following recommendation: {recommendation}. 
+    
+    
+    Now, come up with a set of 5 new questions that help you understand how much the person has learned from the previous questions and the recommendation you gave them."""
 
     input_string_last = """Return a JSON object in the following format:
         {"questions": [{"question": "the question", "rationale": "rationale"}, {"question": "the question", "rationale": "rationale"}]]}"""
