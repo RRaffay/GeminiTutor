@@ -1,5 +1,75 @@
 {% extends "base.html" %} {% block title %}Register Page{% endblock %} {% block
 content %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Function to show a particular step in the form
+    function showStep(step) {
+      const currentStep = document.querySelector(".form-step-active");
+      const inputs = currentStep.querySelectorAll("input");
+      for (let input of inputs) {
+        if (input.value.trim() === "") {
+          alert("Please fill all the fields before proceeding.");
+          return;
+        }
+      }
+
+      document.querySelectorAll(".form-step").forEach((div) => {
+        div.style.display = "none";
+      });
+      document.getElementById(`step-${step}`).style.display = "block";
+      document.querySelector(`#step-${step}`).classList.add("form-step-active");
+      currentStep.classList.remove("form-step-active");
+    }
+
+    // Function to parse classes and display goals input fields
+    function parseClassesAndShowGoals() {
+      const classesInput = document.getElementById("class_names");
+      const classes = classesInput.value
+        .split(",")
+        .map((cls) => cls.trim())
+        .filter((cls) => cls !== "");
+
+      // Check if the classes field is not empty
+      if (classes.length === 0) {
+        alert("Please enter at least one class before proceeding.");
+        return;
+      }
+
+      const container = document.getElementById("goals-container");
+      container.innerHTML = ""; // Clear previous inputs
+      classes.forEach((cls) => {
+        const div = document.createElement("div");
+        div.className = "mb-3";
+        div.innerHTML = `
+          <label class="form-label">${cls} Goal:</label>
+          <input type="text" class="form-control" name="goal_${cls}" />
+        `;
+        container.appendChild(div);
+      });
+      showStep(3);
+    }
+
+    // Attach event listeners to buttons
+    document
+      .querySelector("[data-action='next'][data-step='1']")
+      .addEventListener("click", function () {
+        showStep(2);
+      });
+
+    document
+      .querySelector("[data-action='next'][data-step='2']")
+      .addEventListener("click", function () {
+        parseClassesAndShowGoals();
+      });
+
+    document.querySelectorAll("[data-action='prev']").forEach((button) => {
+      button.addEventListener("click", function () {
+        showStep(parseInt(this.dataset.step));
+      });
+    });
+  });
+</script>
+
 <style>
   .form-control {
     border-radius: 0.25rem;
@@ -70,7 +140,12 @@ content %}
           required
         />
       </div>
-      <button type="button" class="btn btn-primary" onclick="showStep(2)">
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-action="next"
+        data-step="1"
+      >
         Next
       </button>
     </div>
@@ -87,13 +162,20 @@ content %}
           placeholder="Enter classes separated by commas"
         />
       </div>
-      <button type="button" class="btn btn-secondary" onclick="showStep(1)">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-action="prev"
+        data-step="1"
+      >
         Previous
       </button>
+
       <button
         type="button"
         class="btn btn-primary"
-        onclick="parseClassesAndShowGoals();"
+        data-action="next"
+        data-step="2"
       >
         Next
       </button>
@@ -102,53 +184,18 @@ content %}
     <!-- Goals Input Step -->
     <div id="step-3" class="form-step">
       <div id="goals-container"></div>
-      <button type="button" class="btn btn-secondary" onclick="showStep(2)">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-action="prev"
+        data-step="2"
+      >
         Previous
       </button>
+
       <button type="submit" class="btn btn-success">Register</button>
     </div>
   </form>
 </div>
 
-<script>
-  function showStep(step) {
-    const currentStep = document.querySelector(".form-step-active");
-    const inputs = currentStep.querySelectorAll("input");
-    for (let input of inputs) {
-      if (input.value.trim() === "") {
-        alert("Please fill all the fields before proceeding.");
-        return;
-      }
-    }
-
-    document.querySelectorAll(".form-step").forEach((div) => {
-      div.style.display = "none";
-    });
-    document.getElementById(`step-${step}`).style.display = "block";
-  }
-
-  function parseClassesAndShowGoals() {
-    const classes = document.getElementById("class_names").value.split(",");
-
-    // Check if the classes field is not empty
-    if (classes[0].trim() === "") {
-      alert("Please enter at least one class before proceeding.");
-      return;
-    }
-
-    const container = document.getElementById("goals-container");
-    container.innerHTML = ""; // Clear previous inputs
-    const classes = document.getElementById("class_names").value.split(",");
-    classes.forEach((cls) => {
-      const div = document.createElement("div");
-      div.className = "mb-3";
-      div.innerHTML = `
-        <label class="form-label">${cls.trim()} Goal:</label>
-        <input type="text" class="form-control" name="goal_${cls.trim()}" />
-      `;
-      container.appendChild(div);
-    });
-    showStep(3);
-  }
-</script>
 {% endblock %}
