@@ -143,7 +143,13 @@ def move_questions_to_old_questions(uid, subject_name):
     if 'old_questions' not in user_data:
         user_data['old_questions'] = {}
 
-    user_data['old_questions'][subject_name] = user_data['current_questions'][subject_name]
+    if subject_name not in user_data['old_questions']:
+        user_data['old_questions'][subject_name] = {}
+        user_data['old_questions'][subject_name]['questions'] = []
+
+    # Extend the old questions with the current ones
+    user_data['old_questions'][subject_name]['questions'].extend(
+        user_data['current_questions'][subject_name]['questions'])
     user_data['current_questions'][subject_name] = []
 
     doc_ref.update(user_data)
