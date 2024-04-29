@@ -42,7 +42,7 @@ def handle_initial_questions(uid, course_name, goal):
     firebase_questions = parsed_questions
 
     update_user_data(uid, {
-        f'first_visit.{course_name}': False,
+        f'first_visit.{course_name}': True,
         f'current_questions.{course_name}': firebase_questions
     })
 
@@ -83,7 +83,8 @@ def process_answers_controller(user_id, subject_name, questions, answers):
         parsed_questions = None
 
     update_user_data(user_id, {
-        f'current_questions.{subject_name}': parsed_questions
+        f'current_questions.{subject_name}': parsed_questions,
+        f'first_visit.{subject_name}': False,
     })
 
     update_recommendation(user_id, subject_name, recommendation)
