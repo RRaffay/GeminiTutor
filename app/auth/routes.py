@@ -24,12 +24,17 @@ def register():
         email = request.form['email']
         password = request.form['password']
         university = request.form['university']
-        classes = [cls.strip()
-                   for cls in request.form['class_names'].split(',')]
+        # New way to retrieve class names as they are now sent as a list of inputs
+        # Adjusted to handle multiple inputs
+        classes = request.form.getlist('class_names[]')
+        # Clean up and filter out empty entries
+        classes = [cls.strip() for cls in classes if cls.strip()]
 
-        goals = {cls.strip(): request.form.get(f'goal_{cls.strip()}', '')
-                 for cls in classes}
+        # Construct goals dictionary based on the classes
+        goals = {cls: request.form.get(
+            f'goal_{cls}', '').strip() for cls in classes}
 
+        # Assuming create_user handles the logic of storing classes and goals
         user = create_user(email, password, first_name,
                            last_name, university, classes, goals)
         session['user_id'] = user.uid

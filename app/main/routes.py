@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
-from app.firebase_funcs.database import get_user_data, update_goal_and_recommendations
+from app.firebase_funcs.database import get_user_data, update_goal_and_recommendations, add_class_to_user, delete_class_from_user
 from app.utils.markdown_conversion import convert_markdown_to_html
 from flask import jsonify
 from app.main.controller import handle_initial_questions, process_answers_controller, get_current_questions, get_home_page
+
 
 main = Blueprint('main', __name__)
 
@@ -122,3 +123,42 @@ def fetch_questions(class_name):
         current_questions = get_current_questions(
             subject_name=class_name, user_id=user_id)
         return jsonify({'questions': current_questions})
+
+
+@main.route("/add_class", methods=['POST'])
+def add_class():
+    """
+    Add a class to the user's profile.
+
+    Returns:
+        tuple: A tuple containing an empty string and the HTTP status code 200.
+
+    Raises:
+        None
+
+    """
+    if 'user_id' in session:
+        uid = session['user_id']
+        class_name = request.json['class_name']
+        class_name = ''.join(e for e in class_name if e.isalnum())
+        goal = request.json['goal']
+        success = add_class_to_user(uid, class_name=class_name, goal=goal)
+
+        if success:
+            return jsonify({"success": True, "message": "Class added successfully"}), 200
+        else:
+            return jsonify({"success": False, "message": "Failed to add class"}), 500
+    return jsonify({"success": False, "message": "User not logged in"}), 401
+
+
+@main.route("/delete_class/<class_name>", methods=['POST'])
+def delete_class(class_name):
+    """
+    Delete a class from the user's profile.
+    """
+    if 'user_id' in session:
+        uid = session['user_id']
+        # Call the function to delete the class
+        delete_class_from_user(uid, class_name)
+        return "", 200  # Return an HTTP 200 OK response
+    return redirect(url_for('auth.login'))

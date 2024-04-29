@@ -2,7 +2,6 @@
 content %}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // Function to show a particular step in the form
     function showStep(step) {
       const currentStep = document.querySelector(".form-step-active");
       const inputs = currentStep.querySelectorAll("input");
@@ -21,22 +20,36 @@ content %}
       currentStep.classList.remove("form-step-active");
     }
 
-    // Function to parse classes and display goals input fields
+    function addClassInput() {
+      const container = document.getElementById("classes-container");
+      const div = document.createElement("div");
+      div.className = "mb-3 class-input";
+      div.innerHTML = `
+        <input type="text" class="form-control" name="class_names[]" placeholder="Enter a class" required />
+        <button type="button" class="btn btn-danger remove-class" onclick="removeClassInput(this)">Remove</button>
+      `;
+      container.appendChild(div);
+    }
+
+    function removeClassInput(button) {
+      button.parentElement.remove();
+    }
+
     function parseClassesAndShowGoals() {
-      const classesInput = document.getElementById("class_names");
-      const classes = classesInput.value
-        .split(",")
-        .map((cls) => cls.trim())
+      const classInputs = document.querySelectorAll(
+        "input[name='class_names[]']"
+      );
+      const classes = Array.from(classInputs)
+        .map((input) => input.value.trim())
         .filter((cls) => cls !== "");
 
-      // Check if the classes field is not empty
       if (classes.length === 0) {
         alert("Please enter at least one class before proceeding.");
         return;
       }
 
       const container = document.getElementById("goals-container");
-      container.innerHTML = ""; // Clear previous inputs
+      container.innerHTML = "";
       classes.forEach((cls) => {
         const div = document.createElement("div");
         div.className = "mb-3";
@@ -49,7 +62,6 @@ content %}
       showStep(3);
     }
 
-    // Attach event listeners to buttons
     document
       .querySelector("[data-action='next'][data-step='1']")
       .addEventListener("click", function () {
@@ -67,6 +79,10 @@ content %}
         showStep(parseInt(this.dataset.step));
       });
     });
+
+    document
+      .getElementById("add-class-button")
+      .addEventListener("click", addClassInput);
   });
 </script>
 
@@ -74,6 +90,8 @@ content %}
   .form-control {
     border-radius: 0.25rem;
     border: 1px solid #ccc;
+    display: inline-block;
+    width: calc(100% - 90px);
   }
   .form-label {
     font-weight: bold;
@@ -83,6 +101,14 @@ content %}
   }
   .form-step-active {
     display: block;
+  }
+  .class-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .remove-class {
+    width: 80px;
   }
 </style>
 <div class="container mt-5">
@@ -154,13 +180,12 @@ content %}
     <div id="step-2" class="form-step">
       <div class="mb-3">
         <label class="form-label">Classes you are interested in:</label>
-        <input
-          type="text"
-          class="form-control"
-          name="class_names"
-          id="class_names"
-          placeholder="Enter classes separated by commas"
-        />
+        <div id="classes-container">
+          <button type="button" class="btn btn-primary" id="add-class-button">
+            Add Class
+          </button>
+        </div>
+        <br />
       </div>
       <button
         type="button"
@@ -170,7 +195,6 @@ content %}
       >
         Previous
       </button>
-
       <button
         type="button"
         class="btn btn-primary"
