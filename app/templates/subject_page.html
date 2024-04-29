@@ -53,6 +53,8 @@
       <button type="button" class="btn btn-primary" onclick="fetchQuestions()">
         Fetch Questions
       </button>
+      <br />
+      <div id="questionsContainer"></div>
     </div>
     {% endif %}
   </div>
@@ -65,7 +67,23 @@
     })
       .then((response) => response.json())
       .then((data) => {
+        const container = document.getElementById("questionsContainer");
+        container.innerHTML = ""; // Clear previous content
         console.log("Questions:", data.questions);
+        data.questions.forEach((question, index) => {
+          const questionDiv = document.createElement("div");
+          questionDiv.className = "question";
+          questionDiv.innerHTML = `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Question ${index + 1}</h5>
+                        <p class="card-text">${question.question}</p>
+                        <textarea class="form-control" rows="3" id="answer${index}"></textarea>
+                    </div>
+                </div>
+            `;
+          container.appendChild(questionDiv);
+        });
       })
       .catch((error) => {
         console.error("Error:", error);

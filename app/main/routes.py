@@ -55,7 +55,7 @@ def class_page(class_name):
             if first_visit:
                 if user_data.get('current_questions', {}).get(class_name, False):
                     parsed_questions = user_data['current_questions'][class_name]
-                else: 
+                else:
                     parsed_questions = handle_initial_questions(
                         session['user_id'], class_name, goal)
                 return render_template('subject_page.html', class_name=class_name, goal=goal, first_visit=first_visit, questions=parsed_questions['questions'])
@@ -121,11 +121,33 @@ def process_answers(class_name):
 
 @main.route("/class/<class_name>/fetch_questions", methods=['POST'])
 def fetch_questions(class_name):
+    """
+    The function first checks if 'user_id' is in the session. If it is, it retrieves the 'user_id' from the session and calls the `get_current_questions` function with the 'class_name' and 'user_id' as arguments.
+
+    The `get_current_questions` function is expected to return a dictionary with a 'questions' key, where the value is a list of question dictionaries. Each question dictionary should have a 'rationale' and a 'question' key.
+
+    Parameters:
+    class_name (str): The name of the class for which to fetch the questions.
+
+    Returns:
+    A JSON response containing the current questions for the given class. Each question in the response includes a 'rationale' and a 'question'.
+
+    Example of returned JSON:
+    {
+        'questions': [
+            {
+                'rationale': 'Rationale for the question',
+                'question': 'The actual question'
+            },
+            ...
+        ]
+    }
+    """
     if 'user_id' in session:
         user_id = session['user_id']
         current_questions = get_current_questions(
             subject_name=class_name, user_id=user_id)
-        return jsonify({'questions': current_questions})
+        return jsonify(current_questions)
 
 
 @main.route("/add_class", methods=['POST'])
