@@ -53,8 +53,11 @@ def class_page(class_name):
             goal = user_data['goals'].get(class_name, '')
             first_visit = user_data['first_visit'].get(class_name, False)
             if first_visit:
-                parsed_questions = handle_initial_questions(
-                    session['user_id'], class_name, goal)
+                if user_data.get('current_questions', {}).get(class_name, False):
+                    parsed_questions = user_data['current_questions'][class_name]
+                else: 
+                    parsed_questions = handle_initial_questions(
+                        session['user_id'], class_name, goal)
                 return render_template('subject_page.html', class_name=class_name, goal=goal, first_visit=first_visit, questions=parsed_questions['questions'])
             else:
                 if 'recommendations' not in user_data:
