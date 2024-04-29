@@ -69,7 +69,9 @@
       .then((data) => {
         const container = document.getElementById("questionsContainer");
         container.innerHTML = ""; // Clear previous content
-        console.log("Questions:", data.questions);
+        const form = document.createElement("form");
+        form.setAttribute("id", "dynamicQuestionsForm");
+        form.onsubmit = submitDynamicAnswers; // Attach submit event handler
         data.questions.forEach((question, index) => {
           const questionDiv = document.createElement("div");
           questionDiv.className = "question";
@@ -78,18 +80,47 @@
                     <div class="card-body">
                         <h5 class="card-title">Question ${index + 1}</h5>
                         <p class="card-text">${question.question}</p>
-                        <textarea class="form-control" rows="3" id="answer${index}"></textarea>
+                        <textarea class="form-control" name="answer${index}" rows="3" required></textarea>
                     </div>
                 </div>
             `;
-          container.appendChild(questionDiv);
+          form.appendChild(questionDiv);
+          const questionInput = document.createElement("input");
+          questionInput.type = "hidden";
+          questionInput.name = `question${index}`;
+          questionInput.value = question.question;
+          form.appendChild(questionInput);
         });
+        const submitButton = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.className = "btn btn-primary";
+        submitButton.textContent = "Submit Answers";
+        form.appendChild(submitButton);
+        container.appendChild(form);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   }
 
+  function submitDynamicAnswers(event) {
+    event.preventDefault();
+    const form = document.getElementById("dynamicQuestionsForm");
+    const formData = new FormData(form);
+    fetch(`/class/{{ class_name }}/process_answers`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response here, such as displaying the new recommendation
+        console.log("New Recommendation:", data.recommendation);
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
   function submitAnswers() {
     const form = document.getElementById("questionsForm");
     const formData = new FormData(form);
@@ -110,8 +141,7 @@
       .then((response) => response.json())
       .then((data) => {
         console.log("Recommendation:", data.recommendation);
-        // Set if_first_visit to false and display the recommendation
-        window.location.href = `/class/{{ class_name }}?first_visit=false&recommendation=${data.recommendation}`;
+        window.location.href = "/"; // Redirect to home page
       })
       .catch((error) => {
         console.error("Error:", error);
