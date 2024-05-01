@@ -53,6 +53,9 @@
       <button type="button" class="btn btn-primary" onclick="fetchQuestions()">
         Fetch Questions
       </button>
+      <button type="button" class="btn btn-primary" onclick="fetchOldQuestions()">
+        Fetch Previous Questions
+      </button>
       <br />
       <div id="questionsContainer"></div>
     </div>
@@ -102,7 +105,38 @@
         console.error("Error:", error);
       });
   }
-
+  function fetchOldQuestions() {
+    fetch(`/class/{{ class_name }}/fetch_old_questions`, {
+      method: "POST",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const container = document.getElementById("questionsContainer");
+        container.innerHTML = ""; // Clear previous content
+        const form = document.createElement("form");
+        form.setAttribute("id", "oldQuestionsForm");
+        data.questions.forEach((question, index) => {
+          const questionDiv = document.createElement("div");
+          questionDiv.className = "question";
+          questionDiv.innerHTML = `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Question ${index + 1}</h5>
+                        <p class="card-text">${question.question}</p>
+                        <p class="card-text">Answer: ${question.answer}</p>
+                        <p class="card-text">Evaluation: ${question.evaluation}</p>
+                    </div>
+                </div>
+            `;
+          form.appendChild(questionDiv);
+        });
+        container.appendChild(form);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+  
   function submitDynamicAnswers(event) {
     event.preventDefault();
     const form = document.getElementById("dynamicQuestionsForm");
