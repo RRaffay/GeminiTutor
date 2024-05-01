@@ -28,7 +28,7 @@ def register():
         # Adjusted to handle multiple inputs
         classes = request.form.getlist('class_names[]')
         # Clean up and filter out empty entries
-        classes = [cls.strip() for cls in classes if cls.strip()]
+        classes = [cls.replace(" ", "") for cls in classes if cls.strip()]
 
         # Construct goals dictionary based on the classes
         goals = {cls: request.form.get(

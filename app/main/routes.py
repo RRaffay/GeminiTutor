@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, session, redirect, url_for, reques
 from app.firebase_funcs.database import get_user_data, update_goal_and_recommendations, add_class_to_user, delete_class_from_user
 from app.utils.markdown_conversion import convert_markdown_to_html
 from flask import jsonify
-from app.main.controller import handle_initial_questions, process_answers_controller, get_current_questions, get_home_page
+from app.main.controller import handle_initial_questions, process_answers_controller, get_current_questions, get_home_page, get_old_questions
 
 
 main = Blueprint('main', __name__)
@@ -148,7 +148,38 @@ def fetch_questions(class_name):
         current_questions = get_current_questions(
             subject_name=class_name, user_id=user_id)
         return jsonify(current_questions)
+    
+@main.route("/class/<class_name>/fetch_old_questions", methods=['POST'])
+def fetch_old_questions(class_name):
+    """
+    The function first checks if 'user_id' is in the session. If it is, it retrieves the 'user_id' from the session and calls the `get_old_questions` function with the 'class_name' and 'user_id' as arguments.
 
+    The `get_old_questions` function is expected to return a dictionary with a 'questions' key, where the value is a list of question dictionaries. Each question dictionary should have 'rationale', 'question', 'answer', and evaluation keys.
+
+    Parameters:
+    class_name (str): The name of the class for which to fetch the questions.
+
+    Returns:
+    A JSON response containing the current questions for the given class. Each question in the response includes a 'rationale' and a 'question'.
+
+    Example of returned JSON:
+    {
+        'questions': [
+            {
+                'rationale': 'Rationale for the question',
+                'question': 'The actual question'
+                'answer': 'User supplied answer' 
+                'evaluation': 'Evaluation of the answer'
+            },
+            ...
+        ]
+    }
+    """
+    if 'user_id' in session:
+        user_id = session['user_id']
+        old_questions = get_old_questions(
+            subject_name=class_name, user_id=user_id)
+        return jsonify(old_questions)
 
 @main.route("/add_class", methods=['POST'])
 def add_class():

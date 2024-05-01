@@ -31,3 +31,6 @@ htmlcov/
 .coverage.*
 .cache/
 nosetests.xml
+
+# env 
+GeminiTutor_env/
